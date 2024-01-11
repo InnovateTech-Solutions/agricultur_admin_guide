@@ -1,8 +1,9 @@
 import 'package:admin_guide_agriculture/src/constant/color.dart';
 import 'package:admin_guide_agriculture/src/getx/profile_controller.dart';
 import 'package:admin_guide_agriculture/src/model/guide_model.dart';
-import 'package:admin_guide_agriculture/src/view/form_pages/login_page.dart';
+import 'package:admin_guide_agriculture/src/view/user_pages/intro_page.dart';
 import 'package:admin_guide_agriculture/src/widget/text_widget/app_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +13,8 @@ class GuideProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ProfileController());
+    final _auth = FirebaseAuth.instance;
+
     return SafeArea(
         child: Scaffold(
             backgroundColor: ColorConst.mainScaffoldBackgroundColor,
@@ -31,8 +34,9 @@ class GuideProfilePage extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 GestureDetector(
-                                    onTap: () {
-                                      Get.offAll(LoginPage());
+                                    onTap: () async {
+                                      await _auth.signOut();
+                                      Get.offAll(const IntroPage());
                                     },
                                     child: Icon(
                                       Icons.logout,
@@ -59,6 +63,17 @@ class GuideProfilePage extends StatelessWidget {
                                   children: [
                                     thirdText(guideData.name),
                                     thirdText(guideData.area),
+                                    guideData.rating != null
+                                        ? Row(
+                                            children: [
+                                              thirdText(guideData.rating!),
+                                              const Icon(
+                                                Icons.star,
+                                                color: Colors.amber,
+                                              ),
+                                            ],
+                                          )
+                                        : Container(),
                                   ],
                                 ),
                               ],

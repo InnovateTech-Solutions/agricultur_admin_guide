@@ -2,6 +2,7 @@ import 'package:admin_guide_agriculture/src/constant/color.dart';
 import 'package:admin_guide_agriculture/src/getx/farm_controller.dart';
 import 'package:admin_guide_agriculture/src/model/farm_model.dart';
 import 'package:admin_guide_agriculture/src/widget/guide_custom/view_farm_page.dart';
+import 'package:admin_guide_agriculture/src/widget/text_widget/app_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -78,7 +79,12 @@ class OtherFarmWidget extends StatelessWidget {
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [],
+                                  children: [
+                                    headerText(farmName),
+                                    secText(farmAddress),
+                                    secText(farmArea),
+                                    secText(farmId),
+                                  ],
                                 ),
                               ),
                             ),
@@ -89,7 +95,7 @@ class OtherFarmWidget extends StatelessWidget {
                             width: 20,
                           );
                         },
-                        itemCount: 4),
+                        itemCount: farm.length),
                   ),
                 ],
               ),

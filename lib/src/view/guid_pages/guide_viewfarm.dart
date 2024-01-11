@@ -61,6 +61,7 @@ class GuideFarmPage extends StatelessWidget {
                                   IconButton(
                                     onPressed: () {
                                       Get.to(WeeklyReportDialog(
+                                          farmName: farmModel.farmName,
                                           farmId: farmModel.idNumber));
                                     },
                                     icon: const Icon(Icons.article_outlined),

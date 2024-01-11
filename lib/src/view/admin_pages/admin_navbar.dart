@@ -1,7 +1,7 @@
 import 'package:admin_guide_agriculture/src/auth_repo/auth_repo.dart';
 import 'package:admin_guide_agriculture/src/constant/color.dart';
 import 'package:admin_guide_agriculture/src/view/admin_pages/add_disease.dart';
-import 'package:admin_guide_agriculture/src/view/admin_pages/add_guide.dart';
+import 'package:admin_guide_agriculture/src/view/admin_pages/add_guide/add_guide.dart';
 import 'package:admin_guide_agriculture/src/view/admin_pages/add_subcategory.dart';
 import 'package:admin_guide_agriculture/src/view/admin_pages/admin_weekly_report.dart';
 import 'package:flutter/cupertino.dart';

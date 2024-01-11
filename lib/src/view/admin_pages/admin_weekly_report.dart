@@ -60,6 +60,10 @@ class AdminWeeklyReportView extends StatelessWidget {
                                       children: [
                                         headerText(
                                             "Farm IdNumber: ${report[index]["IdNumber"]}"),
+                                        headerText(
+                                            "Farm IdNumber: ${report[index]["FarmName"]}"),
+                                        headerText(
+                                            "Guide Email: ${report[index]["GuideEmail"]}"),
                                         secText(
                                             "Shortfalls: ${report[index]["Missing"]} "),
                                         secText(

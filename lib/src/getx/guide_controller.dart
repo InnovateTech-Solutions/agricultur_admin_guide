@@ -1,10 +1,13 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:admin_guide_agriculture/src/auth_repo/auth_repo.dart';
 import 'package:admin_guide_agriculture/src/constant/color.dart';
 import 'package:admin_guide_agriculture/src/model/guide_model.dart';
+import 'package:admin_guide_agriculture/src/view/admin_pages/add_guide/add_guide_dialog.dart';
 import 'package:admin_guide_agriculture/src/view/admin_pages/admin_navbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,6 +21,7 @@ class GuideController extends GetxController {
   final description = TextEditingController();
   final image = TextEditingController();
   final _db = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
 
   validName(String? name) {
     if (name!.isEmpty) {
@@ -68,20 +72,23 @@ class GuideController extends GetxController {
         .toList();
   }
 
-  Future<List<GuidModel>> fetchGuideByName(String name) async {
-    final querySnapshot =
-        await _db.collection('Guide').where('Name', isEqualTo: name).get();
-
-    return querySnapshot.docs
-        .map((doc) => GuidModel.fromSnapshot(doc))
-        .toList();
-  }
-
   Future<void> createFarm(GuidModel guidModel) async {
     await _db.collection("Guide").add(guidModel.tojason());
   }
 
-  Future<void> addGuide(GuidModel guidModel) async {
+  String generateRandomPassword({int length = 8}) {
+    const String charset =
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()-_=+";
+
+    Random random = Random();
+    List<String> passwordList = List.generate(
+        length, (index) => charset[random.nextInt(charset.length)]);
+
+    return passwordList.join();
+  }
+
+  Future<void> addGuide(GuidModel guidModel, String email, String password,
+      BuildContext context) async {
     if (formkey.currentState!.validate()) {
       Future<bool> code = AuthenticationRepository()
           .createUserWithEmailPassword(guidModel.email, guidModel.password);
@@ -91,10 +98,15 @@ class GuideController extends GetxController {
         await FirebaseFirestore.instance
             .collection('Guide')
             .add(guidModel.tojason());
+        await _auth.signOut();
+
         Get.snackbar("Success", "Your Farm has been added",
             snackPosition: SnackPosition.BOTTOM,
             colorText: ColorConst.mainScaffoldBackgroundColor,
             backgroundColor: Colors.green);
+
+        // ignore: use_build_context_synchronously
+        guideEmailPassword(context, email, password);
       } else {
         Get.snackbar("Error", "Failed to add farm",
             snackPosition: SnackPosition.BOTTOM,

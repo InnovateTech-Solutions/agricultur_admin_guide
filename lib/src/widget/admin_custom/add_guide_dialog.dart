@@ -122,14 +122,19 @@ class _AddGuideDialogState extends State<AddGuideDialog> {
                 ButtonWidget(
                     title: "Add",
                     onTap: () {
-                      controller.addGuide(GuidModel(
-                          password: "123123",
-                          userType: "Guide",
-                          email: controller.email.text.trim(),
-                          name: controller.name.text.trim(),
-                          area: controller.area.text.trim(),
-                          description: controller.description.text.trim(),
-                          image: controller.image.text.trim()));
+                      controller.addGuide(
+                          GuidModel(
+                              password: controller.generateRandomPassword(),
+                              userType: "Guide",
+                              email: controller.email.text.trim(),
+                              name: controller.name.text.trim(),
+                              area: controller.area.text.trim(),
+                              description: controller.description.text.trim(),
+                              image: controller.image.text.trim(),
+                              rating: ''),
+                          controller.email.text.trim(),
+                          controller.generateRandomPassword(),
+                          context);
                       clearText();
                     },
                     containerColor: ColorConst.secScaffoldBackgroundColor,

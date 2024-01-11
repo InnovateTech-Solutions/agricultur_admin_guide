@@ -1,10 +1,11 @@
 import 'package:admin_guide_agriculture/src/constant/color.dart';
 import 'package:admin_guide_agriculture/src/getx/guide_controller.dart';
 import 'package:admin_guide_agriculture/src/model/guide_model.dart';
-import 'package:admin_guide_agriculture/src/view/form_pages/login_page.dart';
 import 'package:admin_guide_agriculture/src/view/user_pages/guidedetail_page.dart';
+import 'package:admin_guide_agriculture/src/view/user_pages/intro_page.dart';
 import 'package:admin_guide_agriculture/src/widget/admin_custom/add_guide_dialog.dart';
 import 'package:admin_guide_agriculture/src/widget/text_widget/app_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,6 +15,8 @@ class AddGuide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(GuideController());
+    final _auth = FirebaseAuth.instance;
+
     return SafeArea(
         child: Scaffold(
       body: FutureBuilder(
@@ -35,8 +38,9 @@ class AddGuide extends StatelessWidget {
                               children: [
                                 headerText("Add Guide"),
                                 GestureDetector(
-                                    onTap: () {
-                                      Get.offAll(LoginPage());
+                                    onTap: () async {
+                                      await _auth.signOut();
+                                      Get.offAll(const IntroPage());
                                     },
                                     child: Icon(
                                       Icons.logout,
@@ -89,7 +93,9 @@ class AddGuide extends StatelessWidget {
                                                 area: guide[index]['Area'],
                                                 description: guide[index]
                                                     ['Description'],
-                                                image: guide[index]['Image'])));
+                                                image: guide[index]['Image'],
+                                                rating: guide[index]
+                                                    ['rating'])));
                                       },
                                       child: Column(
                                         children: [

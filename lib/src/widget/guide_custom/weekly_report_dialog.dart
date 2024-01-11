@@ -3,6 +3,7 @@ import 'package:admin_guide_agriculture/src/model/form_model.dart';
 import 'package:admin_guide_agriculture/src/widget/text_widget/app_text.dart';
 import 'package:admin_guide_agriculture/src/widget/user_custom.dart/button.dart';
 import 'package:admin_guide_agriculture/src/widget/user_custom.dart/form_widget/form_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
@@ -10,8 +11,10 @@ import 'package:get/get.dart';
 import '../../getx/weekly_report_controller.dart';
 
 class WeeklyReportDialog extends StatefulWidget {
-  const WeeklyReportDialog({super.key, required this.farmId});
+  const WeeklyReportDialog(
+      {super.key, required this.farmId, required this.farmName});
   final String farmId;
+  final String farmName;
   @override
   State<WeeklyReportDialog> createState() => _WeeklyReportDialogState();
 }
@@ -92,12 +95,15 @@ class _WeeklyReportDialogState extends State<WeeklyReportDialog> {
                   ButtonWidget(
                     title: "Add",
                     onTap: () {
+                      final email = FirebaseAuth.instance.currentUser!.email!;
                       controller.addWeeklyReport(
                         WeeklyReportModel(
                           rating: controller.rating.value,
                           farmId: widget.farmId,
+                          farmName: widget.farmName,
                           missing: controller.missing.text.trim(),
                           message: controller.message.text.trim(),
+                          guideEmail: email,
                         ),
                       );
                     },

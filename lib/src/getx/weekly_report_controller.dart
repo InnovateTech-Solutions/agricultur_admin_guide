@@ -64,12 +64,16 @@ class WeeklyReport extends GetxController {
 //model
 class WeeklyReportModel {
   String rating;
+  String guideEmail;
+  String farmName;
   String farmId;
   String missing;
   String message;
 
   WeeklyReportModel({
     required this.rating,
+    required this.farmName,
+    required this.guideEmail,
     required this.farmId,
     required this.missing,
     required this.message,
@@ -78,6 +82,8 @@ class WeeklyReportModel {
     return {
       "Rating": rating,
       "IdNumber": farmId,
+      "GuideEmail": guideEmail,
+      "FarmName": farmName,
       "Missing": missing,
       "Message": message,
     };

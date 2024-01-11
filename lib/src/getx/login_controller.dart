@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 
 class LoginController extends GetxController {
   static LoginController get instance => Get.find();
-  final fomkey = GlobalKey<FormState>();
+  var fomkey = GlobalKey<FormState>();
   final _auth = FirebaseAuth.instance;
 
   final email = TextEditingController();

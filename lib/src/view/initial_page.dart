@@ -1,6 +1,7 @@
 import 'package:admin_guide_agriculture/src/view/admin_pages/admin_navbar.dart';
 import 'package:admin_guide_agriculture/src/view/form_pages/login_page.dart';
 import 'package:admin_guide_agriculture/src/view/guid_pages/guide_navbar.dart';
+import 'package:admin_guide_agriculture/src/view/user_pages/intro_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,28 +28,25 @@ class UserAuthWrapper extends StatelessWidget {
                   String userType = userTypeSnapshot.data ?? '';
                   switch (userType) {
                     case 'Farmer':
-                      return LoginPage();
+                      return const LoginPage();
                     case 'Guide':
                       return const GuideNavBar();
-                    case 'admin':
+                    case 'Admin':
                       return const AdminNavBar();
                     default:
-                      return LoginPage();
+                      return const IntroPage();
                   }
                 }
               },
             );
           } else {
-            return LoginPage();
+            return const IntroPage();
           }
         },
       ),
     );
   }
 
-  // ... (rest of your code)
-
-  // Modify the _getUserType function to handle 'Guide' and 'Admin' cases
   Future<String> _getUserType(String email) async {
     QuerySnapshot userQuery = await FirebaseFirestore.instance
         .collection('User')
@@ -69,12 +67,12 @@ class UserAuthWrapper extends StatelessWidget {
     }
 
     QuerySnapshot adminQuery = await FirebaseFirestore.instance
-        .collection('Admin')
+        .collection('admin')
         .where('Email', isEqualTo: email)
         .get();
 
     if (adminQuery.docs.isNotEmpty) {
-      return 'Admin';
+      return adminQuery.docs.first['UserType'];
     }
 
     return '';

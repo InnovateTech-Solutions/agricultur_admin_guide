@@ -7,10 +7,12 @@ class GuidModel {
   String description;
   String image;
   String userType;
+  String? rating;
   String password;
   GuidModel(
       {required this.email,
       required this.password,
+      this.rating,
       required this.name,
       required this.area,
       required this.description,
@@ -37,6 +39,7 @@ class GuidModel {
         email: data['Email'],
         name: data['Name'],
         area: data['Area'],
+        rating: data['rating'] ?? '',
         description: data['Description'],
         image: data['Image'],
         password: data['Password']);
