@@ -16,14 +16,6 @@ class AddGuideDialog extends StatefulWidget {
 }
 
 class _AddGuideDialogState extends State<AddGuideDialog> {
-  void clearText() {
-    controller.name.clear();
-    controller.description.clear();
-    controller.area.clear();
-    controller.image.clear();
-    controller.email.clear();
-  }
-
   final controller = Get.put(GuideController());
 
   @override
@@ -92,17 +84,37 @@ class _AddGuideDialogState extends State<AddGuideDialog> {
                 const SizedBox(
                   height: 50,
                 ),
-                FormWidget(
-                    color: ColorConst.secScaffoldBackgroundColor,
-                    login: FormModel(
-                        enableText: false,
-                        hintText: "Guide Area",
-                        invisible: false,
-                        validator: (area) => controller.validArea(area),
-                        type: TextInputType.name,
-                        onChange: null,
-                        inputFormat: null,
-                        controller: controller.area)),
+                DropdownButton<String>(
+                  value: controller.selectedArea,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      controller.selectedArea = newValue!;
+                    });
+                  },
+                  items: controller.areas
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: TextStyle(
+                          color: ColorConst.secScaffoldBackgroundColor,
+                          fontSize: 20,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  isExpanded: true,
+                  style: TextStyle(
+                      color: ColorConst.mainScaffoldBackgroundColor,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500),
+                  underline: Container(
+                    height: 1,
+                    color: ColorConst
+                        .secScaffoldBackgroundColor, // Set your desired underline color here
+                  ),
+                ),
                 const SizedBox(
                   height: 50,
                 ),
@@ -128,14 +140,13 @@ class _AddGuideDialogState extends State<AddGuideDialog> {
                               userType: "Guide",
                               email: controller.email.text.trim(),
                               name: controller.name.text.trim(),
-                              area: controller.area.text.trim(),
+                              area: controller.selectedArea,
                               description: controller.description.text.trim(),
                               image: controller.image.text.trim(),
                               rating: ''),
                           controller.email.text.trim(),
                           controller.generateRandomPassword(),
                           context);
-                      clearText();
                     },
                     containerColor: ColorConst.secScaffoldBackgroundColor,
                     textColor: ColorConst.mainScaffoldBackgroundColor)

@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:admin_guide_agriculture/src/auth_repo/auth_repo.dart';
 import 'package:admin_guide_agriculture/src/constant/color.dart';
 import 'package:admin_guide_agriculture/src/model/guide_model.dart';
-import 'package:admin_guide_agriculture/src/view/admin_pages/add_guide/add_guide_dialog.dart';
-import 'package:admin_guide_agriculture/src/view/admin_pages/admin_navbar.dart';
+import 'package:admin_guide_agriculture/src/view/admin_pages/add_guide/show_guide_password_email.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -28,6 +26,16 @@ class GuideController extends GetxController {
       return "name is not valid";
     }
     return null;
+  }
+
+  void clearText() {
+    name.clear();
+    description.clear();
+    description.clear();
+    description.clear();
+    area.clear();
+    image.clear();
+    email.clear();
   }
 
   validArea(String? area) {
@@ -78,7 +86,7 @@ class GuideController extends GetxController {
 
   String generateRandomPassword({int length = 8}) {
     const String charset =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#%^&*()-_=+";
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     Random random = Random();
     List<String> passwordList = List.generate(
@@ -87,31 +95,54 @@ class GuideController extends GetxController {
     return passwordList.join();
   }
 
+  final _firestore = FirebaseFirestore.instance;
+  String selectedArea = 'Amman'; // Default value
+
+  final List<String> areas = [
+    'Amman',
+    'Irbid',
+    'Madaba',
+    'Ajloun',
+    'Jerash',
+    'Ma\'an',
+    'Karak',
+    'Ghor al-Urdun',
+  ];
+
   Future<void> addGuide(GuidModel guidModel, String email, String password,
       BuildContext context) async {
     if (formkey.currentState!.validate()) {
-      Future<bool> code = AuthenticationRepository()
-          .createUserWithEmailPassword(guidModel.email, guidModel.password);
+      QuerySnapshot<Map<String, dynamic>> guides = await _firestore
+          .collection('Guide')
+          .where('Area', isEqualTo: selectedArea)
+          .get();
 
-      if (await code) {
-        Get.to(const AdminNavBar());
-        await FirebaseFirestore.instance
-            .collection('Guide')
-            .add(guidModel.tojason());
-        await _auth.signOut();
-
-        Get.snackbar("Success", "Your Farm has been added",
-            snackPosition: SnackPosition.BOTTOM,
-            colorText: ColorConst.mainScaffoldBackgroundColor,
-            backgroundColor: Colors.green);
-
-        // ignore: use_build_context_synchronously
-        guideEmailPassword(context, email, password);
-      } else {
-        Get.snackbar("Error", "Failed to add farm",
+      if (guides.docs.isNotEmpty) {
+        Get.snackbar("ERROR", "Guide with the same area already exists",
             snackPosition: SnackPosition.BOTTOM,
             colorText: ColorConst.mainScaffoldBackgroundColor,
             backgroundColor: Colors.red);
+      } else {
+        // Guide with the same area does not exist, proceed with registration
+        try {
+          // Add guide to Firestore
+          await _firestore.collection('Guide').add(guidModel.tojason());
+
+          await _auth.createUserWithEmailAndPassword(
+            email: email, // Use a unique email for each guide
+            password: password,
+          );
+          clearText();
+
+          Get.snackbar("Success", "Guide has been added",
+              snackPosition: SnackPosition.BOTTOM,
+              colorText: ColorConst.mainScaffoldBackgroundColor,
+              backgroundColor: Colors.green);
+          // ignore: use_build_context_synchronously
+          guideEmailPassword(context, email, password);
+        } catch (e) {
+          print('Error registering guide: $e');
+        }
       }
     } else {
       Get.snackbar("ERROR", "Invalid data",
